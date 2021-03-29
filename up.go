@@ -102,7 +102,7 @@ KEYS
 - Enter   - execute the pipeline command, updating the pipeline output panel
 - Up, Dn, PgUp, PgDn, Ctrl-Left, Ctrl-Right
                       - navigate (scroll) the pipeline output panel
-- Ctrl-X  - exit and write the pipeline to up1.sh (or if it exists then to
+- Ctrl-D  - exit and write the pipeline to up1.sh (or if it exists then to
             up2.sh, etc. till up1000.sh)
 - Ctrl-C  - quit without saving and emit the pipeline on standard output
 - Ctrl-S  - temporarily freeze a long-running input to Ultimate Plumber,
@@ -125,7 +125,7 @@ var (
 	// TODO: dangerous? immediate? raw? unsafe? ...
 	// FIXME(akavel): mark the unsafe mode vs. safe mode with some colour or status; also inform/mark what command's results are displayed...
 	unsafeMode   = pflag.Bool("unsafe-full-throttle", false, "enable mode in which pipeline is executed immediately after any change (without pressing Enter)")
-	outputScript = pflag.StringP("output-script", "o", "", "save the command to specified `file` if Ctrl-X is pressed (default: up<N>.sh)")
+	outputScript = pflag.StringP("output-script", "o", "", "save the command to specified `file` if Ctrl-D is pressed (default: up<N>.sh)")
 	debugMode    = pflag.Bool("debug", false, "debug mode")
 	noColors     = pflag.Bool("no-colors", false, "disable interface colors")
 	shellFlag    = pflag.StringArrayP("exec", "e", nil, "`command` to run pipeline with; repeat multiple times to pass multi-word command; defaults to '-e=$SHELL -e=-c'")
@@ -193,7 +193,7 @@ func main() {
 		// The rest of the screen is a view of the results of the command
 		commandOutput = BufView{}
 		// Sometimes, a message may be displayed at the bottom of the screen, with help or other info
-		message = `Enter runs  ^X exit (^C nosave)  PgUp/PgDn/Up/Dn/^</^> scroll  ^S pause (^Q end)  [Ultimate Plumber v` + version + ` by akavel et al.]`
+		message = `Enter runs  ^D exit (^C nosave)  PgUp/PgDn/Up/Dn/^</^> scroll  ^S pause (^Q end)  [Ultimate Plumber v` + version + ` by akavel et al.]`
 	)
 
 	// Initialize main data flow
@@ -275,16 +275,14 @@ func main() {
 				stdinCapture.Pause(false)
 				restart = true
 			case key(tcell.KeyCtrlC),
-				ctrlKey(tcell.KeyCtrlC),
-				key(tcell.KeyCtrlD),
-				ctrlKey(tcell.KeyCtrlD):
+				ctrlKey(tcell.KeyCtrlC):
 				// Quit
 				tui.Fini()
 				os.Stderr.WriteString("up: Ultimate Plumber v" + version + " https://github.com/akavel/up\n")
 				os.Stderr.WriteString("up: | " + commandEditor.String() + "\n")
 				return
-			case key(tcell.KeyCtrlX),
-				ctrlKey(tcell.KeyCtrlX):
+			case key(tcell.KeyCtrlD),
+				ctrlKey(tcell.KeyCtrlD):
 				// Write script 'upN.sh' and quit
 				tui.Fini()
 				writeScript(shell, commandEditor.String(), tui)
