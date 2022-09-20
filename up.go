@@ -193,7 +193,7 @@ func main() {
 		// The rest of the screen is a view of the results of the command
 		commandOutput = BufView{}
 		// Sometimes, a message may be displayed at the bottom of the screen, with help or other info
-		message = `Enter runs  ^D exit (^C nosave)  PgUp/PgDn/Up/Dn/^</^> scroll  ^S pause (^Q end)  [Ultimate Plumber v` + version + ` by akavel et al.]`
+		message = `Enter runs  ^D exit (^C nosave) ^X save output PgUp/PgDn/Up/Dn/^</^> scroll  ^S pause (^Q end)  [Ultimate Plumber v` + version + ` by akavel et al.]`
 	)
 
 	// Initialize main data flow
@@ -278,7 +278,6 @@ func main() {
 				ctrlKey(tcell.KeyCtrlC):
 				// Quit
 				tui.Fini()
-				os.Stderr.WriteString("up: Ultimate Plumber v" + version + " https://github.com/akavel/up\n")
 				os.Stderr.WriteString("up: | " + commandEditor.String() + "\n")
 				return
 			case key(tcell.KeyCtrlD),
@@ -859,8 +858,8 @@ func TuiRegion(tui tcell.Screen, x, y, w, h int) Region {
 }
 
 var (
-	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlue)
-	whiteOnDBlue = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy)
+	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(135, 215, 135))
+	whiteOnDBlue = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(99, 199, 91))
 )
 
 func drawText(region Region, style tcell.Style, text string) {
