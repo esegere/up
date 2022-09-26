@@ -278,7 +278,6 @@ func main() {
 				ctrlKey(tcell.KeyCtrlC):
 				// Quit
 				tui.Fini()
-				os.Stderr.WriteString("up: | " + commandEditor.String() + "\n")
 				return
 			case key(tcell.KeyCtrlD),
 				ctrlKey(tcell.KeyCtrlD):
