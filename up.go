@@ -738,7 +738,6 @@ func StartSubprocess(shell []string, command string, stdin *Buf, notify func()) 
 	cmd.Stdin = stdin.NewReader(true)
 	err := cmd.Start()
 	if err != nil {
-		fmt.Fprintf(w, "up: %s", err)
 		w.Close()
 		return p
 	}
@@ -746,7 +745,6 @@ func StartSubprocess(shell []string, command string, stdin *Buf, notify func()) 
 	go func() {
 		err = cmd.Wait()
 		if err != nil {
-			fmt.Fprintf(w, "up: %s", err)
 			log.Printf("Wait returned error: %s", err)
 		}
 		w.Close()
@@ -768,73 +766,7 @@ func altKey(base tcell.Key) key     { return key(tcell.ModAlt)<<16 + key(base) }
 func ctrlKey(base tcell.Key) key    { return key(tcell.ModCtrl)<<16 + key(base) }
 
 func writeScript(shell []string, command string, tui tcell.Screen) {
-	os.Stderr.WriteString("up: Ultimate Plumber v" + version + " https://github.com/akavel/up\n")
-	var f *os.File
-	var err error
-	if *outputScript != "" {
-		os.Stderr.WriteString("up: writing " + *outputScript)
-		f, err = os.OpenFile(*outputScript, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			goto fallback_tmp
-		}
-		goto try_file
-	}
-
-	os.Stderr.WriteString("up: writing: .")
-	for i := 1; i < 1000; i++ {
-		f, err = os.OpenFile(fmt.Sprintf("up%d.sh", i), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0755)
-		switch {
-		case os.IsExist(err):
-			continue
-		case err != nil:
-			goto fallback_tmp
-		default:
-			os.Stderr.WriteString("/" + f.Name())
-			goto try_file
-		}
-	}
-	os.Stderr.WriteString(" - error: up1.sh-up999.sh already exist\n")
-	goto fallback_tmp
-
-try_file:
-	// NOTE: currently not supporting multi-word shell in upNNN.sh unfortunately :(
-	_, err = fmt.Fprintf(f, "#!%s\n%s\n", shell[0], command)
-	if err != nil {
-		goto fallback_tmp
-	}
-	err = f.Close()
-	if err != nil {
-		goto fallback_tmp
-	}
-	os.Stderr.WriteString(" - OK\n")
-	return
-
-fallback_tmp:
-	// TODO: test if the fallbacks etc. protections actually work
-	os.Stderr.WriteString(" - error: " + err.Error() + "\n")
-	f, err = ioutil.TempFile("", "up-*.sh")
-	if err != nil {
-		goto fallback_print
-	}
-	_, err = fmt.Fprintf(f, "#!%s\n%s\n", shell, command)
-	if err != nil {
-		goto fallback_print
-	}
-	err = f.Close()
-	if err != nil {
-		goto fallback_print
-	}
-	os.Stderr.WriteString("up: writing: " + f.Name() + " - OK\n")
-	os.Chmod(f.Name(), 0755)
-	return
-
-fallback_print:
-	fname := "TMP"
-	if f != nil {
-		fname = f.Name()
-	}
-	os.Stderr.WriteString("up: writing: " + fname + " - error: " + err.Error() + "\n")
-	os.Stderr.WriteString("up: | " + command + "\n")
+	fmt.Printf("#!%s", command)
 }
 
 type Region struct {
@@ -857,7 +789,7 @@ func TuiRegion(tui tcell.Screen, x, y, w, h int) Region {
 }
 
 var (
-	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(135, 215, 135))
+	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(97, 175, 239))
 	whiteOnDBlue = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(99, 199, 91))
 )
 
