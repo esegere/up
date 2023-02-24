@@ -789,8 +789,8 @@ func TuiRegion(tui tcell.Screen, x, y, w, h int) Region {
 }
 
 var (
-	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(97, 175, 239))
-	whiteOnDBlue = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(99, 199, 91))
+	whiteOnDBlue = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(152, 195, 121))
+	whiteOnBlue  = tcell.StyleDefault.Foreground(tcell.NewRGBColor(19, 22, 19)).Background(tcell.NewRGBColor(99, 199, 91))
 )
 
 func drawText(region Region, style tcell.Style, text string) {
